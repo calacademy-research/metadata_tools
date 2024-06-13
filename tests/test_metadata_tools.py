@@ -3,10 +3,6 @@ import pandas as pd
 import shutil
 from datetime import datetime
 from metadata_tools import MetadataTools
-from EXIF_constants import EXIFConstants
-import xml.etree.ElementTree as ET
-import subprocess
-
 class TestMetadataTools(unittest.TestCase):
 
     def setUp(self):
