@@ -5,4 +5,5 @@ venv/
 .idea/
 *.JPG
 *.TIF
-
+__pycache__/
+tests/__pycache__/

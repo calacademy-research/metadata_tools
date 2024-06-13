@@ -1,5 +1,5 @@
 """metadata_tools: utility functions for the addition, removal and reading of iptc and exif image metadata"""
-from timeout import timeout
+from timeout_decorator import timeout
 import errno
 import os
 import logging
