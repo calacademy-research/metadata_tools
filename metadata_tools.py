@@ -5,7 +5,7 @@ import os
 import logging
 import subprocess
 import traceback
-
+from EXIF_constants import EXIFConstants
 class MetadataTools:
 
     @timeout(20, os.strerror(errno.ETIMEDOUT))
@@ -41,10 +41,15 @@ class MetadataTools:
     def write_exif_tags(self, exif_dict):
         """Writes all exif tags to an image with a single call to ExifTool"""
         self.logger.info(f"Processing EXIF data for: {self.path}")
+
+        valid_dict = EXIFConstants.check_dict_valid(dict=exif_dict)
+
+        if any(value is False for value in valid_dict.values()):
+            raise ValueError(f"Invalid keys in exif_dict, check exif constants:{valid_dict}")
+
         args = ["exiftool", "-overwrite_original"]
         args.extend([f"-{key}={value}" for key, value in exif_dict.items()])
         args.append(self.path)
-
         try:
             subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except Exception as e:

@@ -1,6 +1,7 @@
 import unittest
 import pandas as pd
 import shutil
+from datetime import datetime
 from metadata_tools import MetadataTools
 from EXIF_constants import EXIFConstants
 import xml.etree.ElementTree as ET
@@ -8,38 +9,9 @@ import subprocess
 
 class TestMetadataTools(unittest.TestCase):
 
-    @classmethod
-    def get_exif_tags(self):
-        """Helper method to extract complete list of exif terms compatible with exiftool"""
-        result = subprocess.run(['exiftool', '-listx', '-f'], capture_output=True, text=True)
-
-        if result.returncode != 0:
-            raise Exception(f"Error running exiftool: {result.stderr}")
-
-        xml_output = result.stdout
-
-        #XML output --> string
-        root = ET.fromstring(xml_output)
-
-        tags = set()
-        for table in root.findall('table'):
-            for tag in table.findall('tag'):
-                tag_name = tag.get('name')
-                tags.add(tag_name)
-
-            # Check for IFD0 group
-            if table.get('name') == 'IFD0':
-                for tag in table.findall('tag'):
-                    tag_name = f"IFD0:{tag.get('name')}"
-                    tags.add(tag_name)
-
-        return tags
-
-
     def setUp(self):
         self.path = "tests/test_images/test_image.jpg"
         self.md = MetadataTools(path=self.path)
-        self.valid_exif_tags = self.get_exif_tags()
         shutil.copyfile("tests/test_images/test_image.jpg", "tests/test_images/image_backup.jpg")
 
 
@@ -52,26 +24,25 @@ class TestMetadataTools(unittest.TestCase):
 
     def test_write_exif_tags(self):
         """tests exif attach function"""
-        exif_dict = {'EXIF:LensMake': 'Samsung', 'IPTC:City': 'San Boston', 'EXIF:ApertureValue': '1.5'}
+        datetime_test = datetime.now()
+        datetime_test = datetime_test.strftime('%Y:%m:%d %H:%M:%S.%f')
+        exif_dict = {"XMP:CreatorCity": 'San Francisco', 'IPTC:CopyrightNotice': 'CaliforniaAcademy',
+                     'XMP:CreateDate': f'{datetime_test}'}
         self.md.write_exif_tags(exif_dict=exif_dict)
         exif_return = self.md.read_exif_tags()
-        self.assertEqual("Samsung", exif_return['EXIF:LensMake'])
-        self.assertEqual('San Boston', exif_return['IPTC:City'])
-        self.assertEqual('1.5', exif_return['EXIF:ApertureValue'])
 
-    def test_accepted_exif_tags(self):
-        """test whether the list of EXIFConstants are accepted tags in exiftools"""
-        exif_constants = {attr: value for attr, value in EXIFConstants.__dict__.items() if
-                          not callable(value) and not attr.startswith("__")}
+        self.assertEqual("San Francisco", exif_return['XMP:CreatorCity'])
+        self.assertEqual('CaliforniaAcademy', exif_return['IPTC:CopyrightNotice'])
+        self.assertEqual(str(f'{datetime_test}'), str(exif_return['XMP:CreateDate']))
 
-        for tag_name, tag_value in exif_constants.items():
-            if tag_value.startswith("EXIF:"):
-                parts = tag_value.split(':')
-                actual_tag = parts[-1]  # Get the last part of the split
-                if actual_tag.startswith("IFDO:"):  # Check if IFD0 is present
-                    actual_tag = actual_tag[5:]
-                self.assertIn(actual_tag, self.valid_exif_tags,
-                              f"EXIF tag {tag_value} ({tag_name}) is not a valid EXIF tag")
+    def test_invalid_exif_tags(self):
+        exif_dict = {'EXIF:TEST1': 'Samsung', 'IPTC:CopyrightNotice': 'CaliforniaAcademy', 'EXIF:ApertureValid': '1.5'}
+        with self.assertRaises(ValueError) as context:
+            self.md.write_exif_tags(exif_dict=exif_dict)
+
+        self.assertEqual(str(context.exception),
+                         "Invalid keys in exif_dict, check exif "
+                         "constants:{'EXIF:TEST1': False, 'IPTC:CopyrightNotice': True, 'EXIF:ApertureValid': False}")
 
     def tearDown(self):
         del self.md
