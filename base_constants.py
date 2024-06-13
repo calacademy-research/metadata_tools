@@ -9,11 +9,21 @@ class BaseConstants:
                 yield key, value
 
     @classmethod
+    def check_dict_valid(cls, dict: dict):
+        valid_dict = {}
+        for key in dict.keys():
+            value = cls.is_valid_constant(key)
+            valid_dict[key] = value
+        return valid_dict
+
+
+    @classmethod
     def is_valid_constant(cls, value):
         """
         Checks if the provided value is valid within the constants.
         """
         return value in cls.__dict__.values()
+
 
     @classmethod
     def get_constant(cls, key):
