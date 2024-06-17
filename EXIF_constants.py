@@ -1,4 +1,4 @@
-from base_constants import BaseConstants
+from metadata_tools.base_constants import BaseConstants
 
 class EXIFConstants(BaseConstants):
     # EXIF Constants
