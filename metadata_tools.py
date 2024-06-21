@@ -5,7 +5,7 @@ import os
 import logging
 import subprocess
 import traceback
-from EXIF_constants import EXIFConstants
+from metadata_tools.EXIF_constants import EXIFConstants
 class MetadataTools:
 
     @timeout(20, os.strerror(errno.ETIMEDOUT))
