@@ -38,7 +38,7 @@ class MetadataTools:
         finally:
             self.logger.info("EXIF data read successfully")
 
-    def write_exif_tags(self, exif_dict):
+    def write_exif_tags(self, exif_dict, overwrite_blank=False):
         """Writes all exif tags to an image with a single call to ExifTool"""
         self.logger.info(f"Processing EXIF data for: {self.path}")
 
@@ -48,7 +48,15 @@ class MetadataTools:
             raise ValueError(f"Invalid keys in exif_dict, check exif constants:{valid_dict}")
 
         args = ["exiftool", "-overwrite_original"]
-        args.extend([f"-{key}={value}" for key, value in exif_dict.items()])
+        if overwrite_blank:
+            valid_args = [f"-{key}={value}" for key, value in exif_dict.items()]
+        else:
+            valid_args = [f"-{key}={value}" for key, value in exif_dict.items() if value is not None and len(value) > 0]
+
+        if not valid_args:
+            return
+
+        args.extend(valid_args)
         args.append(self.path)
         try:
             subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
