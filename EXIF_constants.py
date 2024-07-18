@@ -17,6 +17,9 @@ class EXIFConstants(BaseConstants):
     IPTC_CAPTION_ABSTRACT = "IPTC:Caption-Abstract"
     IPTC_KEYWORDS = "IPTC:Keywords"
 
+    # IDF0 constants
+    IFD0_COPYRIGHT = "IFD0:Copyright"
+
     # Photoshop Constants
     PHOTOSHOP_COPYRIGHT_FLAG = "Photoshop:CopyrightFlag"
 
