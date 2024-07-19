@@ -7,7 +7,6 @@ class EXIFConstants(BaseConstants):
     EXIF_CREATE_DATE = "EXIF:CreateDate"
     EXIF_IMAGE_DESCRIPTION = "EXIF:ImageDescription"
     EXIF_IFD0_IMAGE_DESCRIPTION = "EXIF:IFD0:ImageDescription"
-    IFD0_COPYRIGHT = "IFD0:Copyright"
 
     # IPTC Constants
     IPTC_CREDIT = "IPTC:Credit"
