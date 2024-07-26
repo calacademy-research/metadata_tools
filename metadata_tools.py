@@ -51,8 +51,7 @@ class MetadataTools:
         if overwrite_blank:
             valid_args = [f"-{key}={value}" if value is not None else f"-{key}= " for key, value in exif_dict.items()]
         else:
-            valid_args = [f"-{key}={value}" if value is not None else f"-{key}= " for key, value in exif_dict.items() if
-                          value is not None or key in exif_dict]
+            valid_args = [f"-{key}={value}" for key, value in exif_dict.items() if value is not None]
 
         if not valid_args:
             return
