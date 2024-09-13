@@ -7,7 +7,6 @@ class EXIFConstants(BaseConstants):
     EXIF_CREATE_DATE = "EXIF:CreateDate"
     EXIF_IMAGE_DESCRIPTION = "EXIF:ImageDescription"
     EXIF_IFD0_IMAGE_DESCRIPTION = "EXIF:IFD0:ImageDescription"
-    IFD0_COPYRIGHT = "IFD0:Copyright"
 
     # IPTC Constants
     IPTC_CREDIT = "IPTC:Credit"
@@ -22,6 +21,8 @@ class EXIFConstants(BaseConstants):
 
     # Photoshop Constants
     PHOTOSHOP_COPYRIGHT_FLAG = "Photoshop:CopyrightFlag"
+    PHOTOSHOP_CREDIT = "XMP-photoshop:Credit"
+
 
     # XMP Constants
     XMP_RIGHTS = "XMP:Rights" # this is the same as XMP-dc:Rights
@@ -43,3 +44,4 @@ class EXIFConstants(BaseConstants):
     XMP_DC_DESCRIPTION = "XMP-dc:Description"
     XMP_DC_SUBJECT = "XMP-dc:Subject"
     XMP_LR_HIERARCHICAL_SUBJECT = "XMP-lr:HierarchicalSubject"
+    XMP_PLUS_IMAGE_SUPPLIER_NAME = "XMP-plus:ImageSupplierName"
