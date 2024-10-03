@@ -1,5 +1,5 @@
 """metadata_tools: utility functions for the addition, removal and reading of iptc and exif image metadata"""
-from timeout_decorator import timeout
+from wrapt_timeout_decorator import timeout
 import errno
 import os
 import logging
@@ -8,12 +8,11 @@ import traceback
 from metadata_tools.EXIF_constants import EXIFConstants
 class MetadataTools:
 
-    @timeout(20, os.strerror(errno.ETIMEDOUT))
     def __init__(self, path):
         self.path = path
         self.logger = logging.getLogger('MetadataTools')
 
-
+    @timeout(20, os.strerror(errno.ETIMEDOUT))
     def read_exif_tags(self):
 
         """Reads all EXIF tags from an image using ExifTool with advanced formatting and returns them as a dictionary."""
@@ -38,6 +37,7 @@ class MetadataTools:
         finally:
             self.logger.info("EXIF data read successfully")
 
+    @timeout(20, os.strerror(errno.ETIMEDOUT))
     def write_exif_tags(self, exif_dict, overwrite_blank=False):
         """Writes all exif tags to an image with a single call to ExifTool"""
         self.logger.info(f"Processing EXIF data for: {self.path}")
@@ -64,4 +64,5 @@ class MetadataTools:
             traceback.print_exc()
             raise ValueError(f"ExifTool command returned with error: {e}")
         self.logger.info("EXIF data added successfully")
+
 
