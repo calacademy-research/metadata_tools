@@ -5,6 +5,7 @@ import os
 import logging
 import subprocess
 import traceback
+import platform
 from metadata_tools.EXIF_constants import EXIFConstants
 class MetadataTools:
 
@@ -12,11 +13,11 @@ class MetadataTools:
         self.path = path
         self.logger = logging.getLogger('MetadataTools')
 
-        env = os.environ.copy()
-        env['LC_ALL'] = encoding
-        env['LANG'] = encoding
+        self.env = os.environ.copy()
+        self.env["LC_ALL"] = encoding
+        self.env["LANG"] = encoding
+        self.env["LC_CTYPE"] = encoding
 
-        self.env = env
 
     @timeout(20, os.strerror(errno.ETIMEDOUT))
     def read_exif_tags(self):

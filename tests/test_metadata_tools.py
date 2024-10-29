@@ -3,11 +3,18 @@ import pandas as pd
 import shutil
 from datetime import datetime
 from metadata_tools import MetadataTools
+import platform
 class TestMetadataTools(unittest.TestCase):
 
     def setUp(self):
         self.path = "tests/test_images/test_image.jpg"
-        self.md = MetadataTools(path=self.path)
+        if platform.system() == "Darwin":
+            encoding = "en_US.UTF-8"
+        else:
+            encoding = "C.UTF-8"
+
+        self.md = MetadataTools(path=self.path, encoding=encoding)
+
         shutil.copyfile("tests/test_images/test_image.jpg", "tests/test_images/image_backup.jpg")
 
 
