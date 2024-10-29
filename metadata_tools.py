@@ -8,17 +8,25 @@ import traceback
 from metadata_tools.EXIF_constants import EXIFConstants
 class MetadataTools:
 
-    def __init__(self, path):
+    def __init__(self, path, encoding="C.UTF-8"):
         self.path = path
         self.logger = logging.getLogger('MetadataTools')
+
+        env = os.environ.copy()
+        env['LC_ALL'] = encoding
+        env['LANG'] = encoding
+
+        self.env = env
 
     @timeout(20, os.strerror(errno.ETIMEDOUT))
     def read_exif_tags(self):
 
         """Reads all EXIF tags from an image using ExifTool with advanced formatting and returns them as a dictionary."""
         command = ['exiftool', '-a', '-g', '-G', self.path]
+
+        # Set UTF-8 locale for this subprocess
         try:
-            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=self.env)
             if result.stderr:
                 raise ValueError(f"ExifTool error: {result.stderr.strip()}")
             tags = {}
@@ -59,7 +67,7 @@ class MetadataTools:
         args.extend(valid_args)
         args.append(self.path)
         try:
-            subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=self.env)
         except Exception as e:
             traceback.print_exc()
             raise ValueError(f"ExifTool command returned with error: {e}")
