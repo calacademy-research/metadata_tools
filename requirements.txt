@@ -1,11 +1,11 @@
 numpy~=2.1
 pandas~=2.2.3
 pillow~=10.3.0
-python-dateutil~=2.8.2
+python-dateutil~=2.9.0
 pytz~=2024.2
 six~=1.16.0
 wrapt-timeout-decorator~=1.5.1
-tzdata~=2022.7
+tzdata~=2024.2
 pytest~=8.3.3
 setuptools~=75.2.0
 wheel~=0.44.0
