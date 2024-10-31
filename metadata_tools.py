@@ -5,7 +5,6 @@ import os
 import logging
 import subprocess
 import traceback
-import platform
 from metadata_tools.EXIF_constants import EXIFConstants
 class MetadataTools:
 
@@ -14,10 +13,10 @@ class MetadataTools:
         self.logger = logging.getLogger('MetadataTools')
 
         self.env = os.environ.copy()
+        self.encoding = encoding
         self.env["LC_ALL"] = encoding
         self.env["LANG"] = encoding
         self.env["LC_CTYPE"] = encoding
-
 
     @timeout(20, os.strerror(errno.ETIMEDOUT))
     def read_exif_tags(self):
@@ -27,11 +26,22 @@ class MetadataTools:
 
         # Set UTF-8 locale for this subprocess
         try:
-            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=self.env)
+            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=False, env=self.env)
             if result.stderr:
                 raise ValueError(f"ExifTool error: {result.stderr.strip()}")
+
+            output = result.stdout
+
+            try:
+                output_str = output.decode('utf-8')
+            except UnicodeDecodeError:
+                try:
+                    output_str = output.decode('ISO-8859-1', errors="replace")
+                except Exception as e:
+                    raise ValueError(f"Decoding error: {e}")
+
             tags = {}
-            for line in result.stdout.split("\n"):
+            for line in output_str.split("\n"):
                 if ": " in line:
                     group, key_value = line.split("]", 1)
                     key, value = key_value.split(":", 1)
