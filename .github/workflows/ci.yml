@@ -2,10 +2,9 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
   workflow_dispatch:
 
 jobs:
@@ -16,6 +15,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      
+    - name: Install curl
+      run: apt-get update && apt-get install -y curl
       
     - name: Install uv
       run: |
@@ -32,7 +34,7 @@ jobs:
       
     - name: Upload test results
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: test-results
         path: |
