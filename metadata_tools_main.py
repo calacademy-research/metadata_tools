@@ -1,5 +1,5 @@
 """metadata_tools: utility functions for the addition, removal and reading of iptc and exif image metadata"""
-from timeout_decorator import timeout
+from wrapt_timeout_decorator import timeout
 import errno
 import os
 import logging
@@ -12,6 +12,7 @@ class MetadataTools:
     def __init__(self, path):
         self.path = path
         self.logger = logging.getLogger('MetadataTools')
+        self.env = os.environ.copy()
     @staticmethod
     def safe_decode(byte_data):
         try:
