@@ -46,8 +46,9 @@ jobs:
         python -c "from cas_metadata_tools import MetadataTools; print('Package imported successfully')"
 
     
-    - name: Publish to GitHub Package Registry
-      uses: pypa/gh-action-pypi-publish@release/v1
+    - name: Attach to Release
+      uses: softprops/action-gh-release@v1
       with:
-        password: ${{ secrets.GITHUB_TOKEN }}
-        repository_url: https://github.com/calacademy-research/metadata_tools/packages 
+        files: |
+          dist/*.whl
+          dist/*.tar.gz
