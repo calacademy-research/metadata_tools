@@ -5,7 +5,7 @@ import os
 import logging
 import subprocess
 import traceback
-from metadata_tools.EXIF_constants import EXIFConstants
+from cas_metadata_tools.EXIF_constants import EXIFConstants
 
 class MetadataTools:
 

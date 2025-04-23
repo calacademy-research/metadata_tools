@@ -6,7 +6,7 @@ import unittest
 import pandas as pd
 import shutil
 from datetime import datetime
-from metadata_tools import MetadataTools
+from cas_metadata_tools import MetadataTools
 import platform
 
 
