@@ -33,7 +33,7 @@ Download from [ExifTool website](https://exiftool.org/) and add to your PATH.
 ## Usage
 
 ```python
-from metadata_tools import your_module
+from cas_metadata_tools import your_module
 
 # Add usage examples here
 ```
