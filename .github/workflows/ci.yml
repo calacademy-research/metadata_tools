@@ -2,10 +2,9 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
   workflow_dispatch:
 
 jobs:
@@ -16,23 +15,40 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-      
+
+    - name: Install curl
+      run: apt-get update && apt-get install -y curl
+
+    - name: Install ExifTool
+      run: apt-get install -y libimage-exiftool-perl
+
     - name: Install uv
-      run: |
-        curl -LsSf https://astral.sh/uv/install.sh | sh
-        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-      
+      run: pip install uv
+
     - name: Install dependencies
       run: |
-        uv pip install -r requirements.txt
-      
-    - name: Run tests
+        uv pip install --system -r requirements.txt
+        uv pip install --system -e .
+
+    - name: Run tests (development mode)
       run: |
-        python tests/test_metadata_tools.py
-      
+        uv pip install --system -r tests/requirements.txt
+        pytest tests --junitxml=report.xml
+
+    - name: Build package
+      run: |
+        uv pip install --system build
+        python -m build
+
+    - name: Test built package
+      run: |
+        uv pip install --system dist/*.whl
+        python -c "from cas_metadata_tools import MetadataTools; print('Package imported successfully')"
+        python -m pytest tests/
+
     - name: Upload test results
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: test-results
         path: |

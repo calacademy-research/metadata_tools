@@ -5,43 +5,40 @@ import os
 import logging
 import subprocess
 import traceback
-from metadata_tools.EXIF_constants import EXIFConstants
+from cas_metadata_tools.EXIF_constants import EXIFConstants
+
 class MetadataTools:
 
-    def __init__(self, path, encoding="C.UTF-8"):
+    def __init__(self, path):
         self.path = path
         self.logger = logging.getLogger('MetadataTools')
-
         self.env = os.environ.copy()
-        self.encoding = encoding
-        self.env["LC_ALL"] = encoding
-        self.env["LANG"] = encoding
-        self.env["LC_CTYPE"] = encoding
+    @staticmethod
+    def safe_decode(byte_data):
+        try:
+            return byte_data.decode('utf-8')
+        except UnicodeDecodeError:
+            try:
+                return byte_data.decode('ISO-8859-1')
+            except UnicodeDecodeError:
+                return byte_data.decode('latin-1')
+            finally:
+                return byte_data.decode('utf-8', errors='ignore')
+        
 
     @timeout(20, os.strerror(errno.ETIMEDOUT))
     def read_exif_tags(self):
 
         """Reads all EXIF tags from an image using ExifTool with advanced formatting and returns them as a dictionary."""
         command = ['exiftool', '-a', '-g', '-G', self.path]
-
-        # Set UTF-8 locale for this subprocess
         try:
-            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=False, env=self.env)
+            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,text=False, env=self.env)
+            result.stdout = MetadataTools.safe_decode(result.stdout)
+            result.stderr = MetadataTools.safe_decode(result.stderr)
             if result.stderr:
                 raise ValueError(f"ExifTool error: {result.stderr.strip()}")
-
-            output = result.stdout
-
-            try:
-                output_str = output.decode('utf-8')
-            except UnicodeDecodeError:
-                try:
-                    output_str = output.decode('ISO-8859-1', errors="replace")
-                except Exception as e:
-                    raise ValueError(f"Decoding error: {e}")
-
             tags = {}
-            for line in output_str.split("\n"):
+            for line in result.stdout.split("\n"):
                 if ": " in line:
                     group, key_value = line.split("]", 1)
                     key, value = key_value.split(":", 1)
@@ -78,10 +75,9 @@ class MetadataTools:
         args.extend(valid_args)
         args.append(self.path)
         try:
-            subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=self.env)
+            subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE,env=self.env)
         except Exception as e:
             traceback.print_exc()
             raise ValueError(f"ExifTool command returned with error: {e}")
         self.logger.info("EXIF data added successfully")
-
 

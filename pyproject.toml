@@ -1,0 +1,44 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cas-metadata-tools"
+version = "1.0.0"
+description = "Tools for working with metadata in various file formats"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = "MIT"
+authors = [
+    { name = "Matthew De La Roca", email = "mdelaroca@calacademy.org" },
+    { name = "Joe Russack", email = "jrussack@calacademy.org" },
+    { name = "Shiqi Yang", email = "shyang@calacademy.org" }
+]
+dependencies = [
+    "wrapt-timeout-decorator~=1.5.1"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/calacademy-research/metadata_tools"
+"Bug Tracker" = "https://github.com/calacademy-research/metadata_tools/issues"
+
+[project.optional-dependencies]
+dev = [
+    "pytest~=8.3.3",
+    "setuptools~=75.2.0",
+    "wheel~=0.44.0"
+]
+test = [
+    "pytest~=8.3.3",
+    "pandas~=2.2.3"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["cas_metadata_tools"] 

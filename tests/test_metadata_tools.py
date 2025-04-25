@@ -1,9 +1,16 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import unittest
 import pandas as pd
 import shutil
 from datetime import datetime
-from metadata_tools import MetadataTools
+from cas_metadata_tools import MetadataTools
 import platform
+
+
+
 class TestMetadataTools(unittest.TestCase):
 
     def setUp(self):
@@ -13,7 +20,7 @@ class TestMetadataTools(unittest.TestCase):
         else:
             encoding = "C.UTF-8"
 
-        self.md = MetadataTools(path=self.path, encoding=encoding)
+        self.md = MetadataTools(path=self.path)
 
         shutil.copyfile("tests/test_images/test_image.jpg", "tests/test_images/image_backup.jpg")
 
@@ -47,8 +54,22 @@ class TestMetadataTools(unittest.TestCase):
                          "Invalid keys in exif_dict, check exif "
                          "constants:{'EXIF:TEST1': False, 'IPTC:CopyrightNotice': True, 'EXIF:ApertureValid': False}")
 
+    def test_latin_1_encoding(self):
+        self.md.path = os.path.join("tests", "test_images", "test_image_latin1.jpg")
+        exif_dict = self.md.read_exif_tags()
+        self.assertEqual(exif_dict['EXIF:Artist'], 'Johanna Loacker')
+        # this is latin1 encoded
+        self.assertEqual(exif_dict['EXIF:Copyright'], '© California Academy of Sciences licensed under CC BY-NC-SA')
+    
+    def test_other_encoding(self):
+        self.md.path = os.path.join("tests", "test_images", "exif_gb2312.jpg")
+        exif_dict = self.md.read_exif_tags()
+        self.assertEqual(exif_dict['EXIF:UserComment'], '你好！')
+
     def tearDown(self):
         del self.md
         shutil.copyfile("tests/test_images/image_backup.jpg", "tests/test_images/test_image.jpg")
 
 
+if __name__ == '__main__':
+    unittest.main()
