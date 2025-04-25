@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cas-metadata-tools"
-version = "0.1.0-dev"
+version = "1.0.0"
 description = "Tools for working with metadata in various file formats"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
