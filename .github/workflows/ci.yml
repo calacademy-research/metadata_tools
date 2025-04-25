@@ -26,10 +26,25 @@ jobs:
       run: pip install uv
 
     - name: Install dependencies
-      run: uv pip install --system -r requirements.txt
+      run: |
+        uv pip install --system -r requirements.txt
+        uv pip install --system -e .
 
-    - name: Run tests
-      run: pytest tests --junitxml=report.xml
+    - name: Run tests (development mode)
+      run: |
+        uv pip install --system -r tests/requirements.txt
+        pytest tests --junitxml=report.xml
+
+    - name: Build package
+      run: |
+        uv pip install --system build
+        python -m build
+
+    - name: Test built package
+      run: |
+        uv pip install --system dist/*.whl
+        python -c "from cas_metadata_tools import MetadataTools; print('Package imported successfully')"
+        python -m pytest tests/
 
     - name: Upload test results
       if: always()

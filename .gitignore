@@ -1,9 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data files (but keep test fixtures)
 *.csv
 *.xlsx
 *.tsv
+*.JPG
+!tests/fixtures/*.JPG
+*.TIF
+!tests/fixtures/*.TIF
+
+# Python cache
+tests/__pycache__/
+
 venv/
 .idea/
 *.JPG
 *.TIF
-__pycache__/
 tests/__pycache__/

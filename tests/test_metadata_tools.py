@@ -1,12 +1,12 @@
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import unittest
 import pandas as pd
 import shutil
 from datetime import datetime
-from metadata_tools import MetadataTools
+from cas_metadata_tools import MetadataTools
 import platform
 
 
@@ -60,6 +60,11 @@ class TestMetadataTools(unittest.TestCase):
         self.assertEqual(exif_dict['EXIF:Artist'], 'Johanna Loacker')
         # this is latin1 encoded
         self.assertEqual(exif_dict['EXIF:Copyright'], '© California Academy of Sciences licensed under CC BY-NC-SA')
+    
+    def test_other_encoding(self):
+        self.md.path = os.path.join("tests", "test_images", "exif_gb2312.jpg")
+        exif_dict = self.md.read_exif_tags()
+        self.assertEqual(exif_dict['EXIF:UserComment'], '你好！')
 
     def tearDown(self):
         del self.md
